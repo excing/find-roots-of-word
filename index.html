@@ -1,0 +1,235 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+  <title>Find root-affixes🍂 of word</title>
+
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 1080px;
+      margin: auto;
+      padding: 8px;
+      font-size: 1.2rem;
+    }
+
+    h1 {
+      color: rgb(170, 170, 170);
+      text-align: center;
+    }
+
+    textarea,
+    input {
+      font-size: 1.2rem;
+      padding: 8px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 7px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .h-70 {
+      height: 70%;
+      min-height: 70%;
+      max-height: 70%;
+    }
+
+    .h-min-100 {
+      min-height: 100%;
+    }
+
+    .w-100 {
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+    }
+
+    .red {
+      color: red;
+    }
+
+    .sp-_8 {
+      font-size: 0.8em;
+    }
+
+    .top-0 {
+      margin-top: 0px;
+      margin-block-start: 0px;
+    }
+
+    .text-c {
+      text-align: center;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .sticky {
+      position: sticky;
+      top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container" class="w-100 h-70">
+    <h1><a href="index.html" onclick="return onReset()">🥑</a> <span id="title"></span></h1>
+    <form id="form" class="w-100 flex sticky" action="" onsubmit="return onSearch()">
+      <input id="word" type="text" name="word" width="100%" style="width: 100%;" placeholder="search word"><br>
+      <input type="submit" value="🔍" />
+    </form>
+    <div id="rootsAndAffixes"></div>
+  </div>
+  <script>
+    const CSS_CLASS_H_70 = "h-70"
+    const CSS_CLASS_H_MIN_100 = "h-min-100"
+    const TITLE = "Find root-affixes🍂 of word"
+
+    function onReset() {
+      reset()
+      return false
+    }
+
+    function onSearch() {
+      var wordEl = document.getElementById("word")
+      search(wordEl.value)
+
+      return false
+    }
+
+    function search(word) {
+      if ("" === word) {
+        reset()
+        return
+      }
+      fetch('/dict/affix?word=' + word, {
+        method: 'GET', // or 'PUT'
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Success:', data);
+          setWordRootsAndAffixes(data)
+          pushStateHistory(word, data)
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          addPToElement(rootsAndAffixesEl, error, "bold red")
+        });
+    }
+
+    function setSearchWordInput(word) {
+      var wordEl = document.getElementById("word")
+      wordEl.value = word
+      wordEl.focus()
+    }
+
+    function setWordRootsAndAffixes(data) {
+      var containerEl = document.getElementById("container")
+      containerEl.classList.add(CSS_CLASS_H_MIN_100)
+      containerEl.classList.remove(CSS_CLASS_H_70)
+      var rootsAndAffixesEl = document.getElementById("rootsAndAffixes")
+      rootsAndAffixesEl.innerHTML = ""
+      addPToElement(
+        rootsAndAffixesEl,
+        '"prefix-" is prefix word, "root" is root word, "-suffix" is suffix word',
+        'red sp-_8 top-0',
+      )
+      if (0 == data.length) {
+        addPToElement(rootsAndAffixesEl, "🍉 No available root-affix combinations were found", "bold")
+      }
+      data.forEach(element => {
+        addPToElement(rootsAndAffixesEl, element)
+      });
+    }
+
+    function addPToElement(el, text, css = "") {
+      var p = document.createElement("p")
+      p.className = css
+      p.innerText = text
+      el.appendChild(p)
+    }
+
+    function pushStateHistory(word, data) {
+      let stateObj = { word: word, data: data, };
+      if ("" === word) {
+        history.replaceState(stateObj, TITLE, "index.html");
+      } else {
+        history.pushState(stateObj, word + " —— " + TITLE, "?word=" + word);
+      }
+    }
+
+    function reset() {
+      setSearchWordInput("")
+      var containerEl = document.getElementById("container")
+      containerEl.classList.remove(CSS_CLASS_H_MIN_100)
+      containerEl.classList.add(CSS_CLASS_H_70)
+      var rootsAndAffixesEl = document.getElementById("rootsAndAffixes")
+      rootsAndAffixesEl.innerHTML = ""
+      addPToElement(rootsAndAffixesEl, "Support global use of `Ctrl+v` or `Commend+v`", "sp-_8 top-0 red")
+      pushStateHistory("", null)
+    }
+
+    function init() {
+      document.getElementById("title").innerText = TITLE
+      var url = new URL(window.location)
+      var params = url.searchParams
+      if (params.has("word")) {
+        var word = params.get("word")
+        setSearchWordInput(word)
+        search(word)
+      } else {
+        reset()
+      }
+    }
+
+    window.onpopstate = function (e) {
+      var state = e.state
+      if (state && "" != state.word) {
+        setSearchWordInput(state.word)
+        setWordRootsAndAffixes(state.data)
+      } else {
+        reset()
+      }
+    }
+
+    document.onmouseover = function (e) {
+      if (e.target == document.getElementById("word")) {
+        e.target.select()
+      }
+    }
+
+    // 参考:
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/Element/paste_event
+    window.addEventListener("paste", (event) => {
+      let paste = (event.clipboardData || window.clipboardData).getData('text')
+      paste = paste.toLowerCase()
+
+      setSearchWordInput(paste)
+
+      event.preventDefault();
+    })
+
+    window.addEventListener("keydown", (event) => {
+      if ("Tab" == event.key && event.target == document.body) {
+        event.preventDefault()
+        document.getElementById("word").select()
+      }
+    })
+
+    init()
+  </script>
+</body>
+
+</html>
