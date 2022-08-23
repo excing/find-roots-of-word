@@ -92,6 +92,7 @@
     </form>
     <div id="rootsAndAffixes"></div>
   </div>
+  <script src="core.js"></script>
   <script>
     const CSS_CLASS_H_70 = "h-70"
     const CSS_CLASS_H_MIN_100 = "h-min-100"
@@ -114,19 +115,10 @@
         reset()
         return
       }
-      fetch('/dict/affix?word=' + word, {
-        method: 'GET', // or 'PUT'
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log('Success:', data);
-          setWordRootsAndAffixes(data)
-          pushStateHistory(word, data)
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-          addPToElement(rootsAndAffixesEl, error, "bold red")
-        });
+      var data = findRootAffixes(word)
+      console.log('Success:', data);
+      setWordRootsAndAffixes(data)
+      pushStateHistory(word, data)
     }
 
     function setSearchWordInput(word) {
