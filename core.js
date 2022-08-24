@@ -19,6 +19,13 @@ class Path {
   }
 }
 
+class Result {
+  constructor(exchange, paths) {
+    this.exchange = exchange
+    this.paths = paths
+  }
+}
+
 async function initRootsAndAffixesResource() {
   if (0 < rootsAndAffixesMap.size) {
     return Promise.resolve()
@@ -48,6 +55,26 @@ async function initWordExchangesResource() {
   if (0 < wordExchangeMap.size) {
     return Promise.resolve()
   }
+  const handleExchangeDesc = function (name) {
+    switch (name) {
+      case "p":
+        return `past tense`
+      case "d":
+        return `past participle`
+      case "i":
+        return `present participle`
+      case "3":
+        return `third-person singular`
+      case "r":
+        return `comparative`
+      case "t":
+        return `superlative`
+      case "s":
+        return `plural`
+      default:
+        return ""
+    }
+  }
   const handleWordExchange = function (lamme, exchanges) {
     // 格式
     // i:eating,p:ate,d:eaten,3:eats
@@ -55,10 +82,14 @@ async function initWordExchangesResource() {
     arr.forEach(element => {
       let temp = element.split(":")
       if (wordExchangeMap.has(temp[1])) {
-        var exchangeObj = wordExchangeMap.get(temp[1])
-        exchangeObj.name += temp[0]
+        let wordExchange = wordExchangeMap.get(temp[1])
+        wordExchange.name += temp[0]
+        wordExchange.desc += ", " + handleExchangeDesc(temp[0])
       } else {
-        wordExchangeMap.set(temp[1], new Exchange(temp[0], temp[1], lamme, "DESC"))
+        wordExchangeMap.set(
+          temp[1],
+          new Exchange(temp[0], temp[1], lamme, handleExchangeDesc(temp[0])),
+        )
       }
     })
   }
@@ -103,15 +134,15 @@ async function WordRootAffixes(word) {
 function findWordRootAffixes(word) {
   // Step 0.
   if (2 >= word.length) {
-    return [word]
+    return new Result(null, [word])
   }
   // Step 1.
   if (wordExchangeMap.has(word)) {
     let exchange = wordExchangeMap.get(word)
     let arr = findLammeRootAffixes(exchange.lamme)
-    return [exchange.lamme].concat(arr)
+    return new Result(exchange, arr)
   }
-  return findLammeRootAffixes(word)
+  return new Result(null, findLammeRootAffixes(word))
 }
 
 function findLammeRootAffixes(lamme = "") {

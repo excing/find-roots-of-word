@@ -145,7 +145,7 @@
           return []
         })
         .then(data => {
-          console.log('Success:', data);
+          console.log('Success:', data)
           setWordRootsAndAffixes(data)
           pushStateHistory(word, data)
         })
@@ -171,10 +171,14 @@
         '"prefix-" is prefix word, "root" is root word, "-suffix" is suffix word',
         'red sp-_8 top-0',
       )
-      if (0 == data.length) {
+      var paths = data.paths
+      if (null != data.exchange) {
+        addPToElement(rootsAndAffixesEl, `[${data.exchange.lamme}]: ${data.exchange.desc}`, "bold")
+      }
+      if (0 == paths.length) {
         addPToElement(rootsAndAffixesEl, "🍉 No available root-affix combinations were found", "bold")
       }
-      data.forEach(element => {
+      paths.forEach(element => {
         addPToElement(rootsAndAffixesEl, element)
       });
     }
