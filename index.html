@@ -137,10 +137,21 @@
         reset()
         return
       }
-      var data = findRootAffixes(word)
-      console.log('Success:', data);
-      setWordRootsAndAffixes(data)
-      pushStateHistory(word, data)
+      WordRootAffixes(word)
+        .then(data => {
+          if (data) {
+            return data
+          }
+          return []
+        })
+        .then(data => {
+          console.log('Success:', data);
+          setWordRootsAndAffixes(data)
+          pushStateHistory(word, data)
+        })
+        .catch(err => {
+          console.error(err)
+        })
     }
 
     function setSearchWordInput(word) {
