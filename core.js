@@ -23,10 +23,10 @@ async function initRootsAndAffixesResource() {
   if (0 < rootsAndAffixesMap.size) {
     return Promise.resolve()
   }
-  return fetch(domain + '/roots-and-affixes.csv', { method: 'GET', })
+  return fetch(roots_and_affixes_csv_url, { method: 'GET', })
     .then(response => {
       if (200 != response.status) {
-        throw `Init roots-and-affixes.csv failed: ${response.statusText}`
+        throw `Init ${roots_and_affixes_csv_filename} failed: ${response.statusText}`
       }
       return response
     })
@@ -41,7 +41,7 @@ async function initRootsAndAffixesResource() {
       })
     })
     .then(_ => console.log(`Root-affix length is ${rootsAndAffixesMap.size}`))
-    .catch(_ => console.error(err))
+    .catch(err => console.error(err))
 }
 
 async function initWordExchangesResource() {
@@ -62,10 +62,10 @@ async function initWordExchangesResource() {
       }
     })
   }
-  return fetch(domain + '/word-exchanges.csv', { method: 'GET', })
+  return fetch(word_exchanges_csv_url, { method: 'GET', })
     .then(response => {
       if (200 != response.status) {
-        throw `Init roots-and-affixes.csv failed: ${response.statusText}`
+        throw `Init ${word_exchanges_csv_filename} failed: ${response.statusText}`
       }
       return response
     })
@@ -83,10 +83,11 @@ async function initWordExchangesResource() {
     .catch(err => console.error(err))
 }
 
-const domain = ""
-// const domain = "/find-roots-of-word"
-const roots_and_affixes_csv = domain + '/roots-and-affixes.csv'
-const word_exchanges_csv = domain + '/word-exchanges.csv'
+const domain = location.pathname.replace("/index.html", "")
+const roots_and_affixes_csv_filename = 'roots-and-affixes.csv'
+const word_exchanges_csv_filename = 'word-exchanges.csv'
+const roots_and_affixes_csv_url = `${domain}/${roots_and_affixes_csv_filename}`
+const word_exchanges_csv_url = domain + `${domain}/${word_exchanges_csv_filename}`
 
 const rootsAndAffixesMap = new Map()
 const wordExchangeMap = new Map()
