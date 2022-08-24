@@ -49,6 +49,8 @@
 - [lnkDrop/Match-Root](https://github.com/lnkDrop/Match-Root)
 - [skywind3000/ECDICT](https://github.com/skywind3000/ECDICT)
 
+感谢！
+
 ## LICENSE
 
 MIT License
