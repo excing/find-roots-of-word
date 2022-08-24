@@ -48,14 +48,17 @@
       font-size: 1rem;
     }
 
-    #rootsAndAffixes {
-      background-color: rgba(252, 255, 225, 0.5);
-      border-radius: 0.4rem;
-      padding: 0.1rem 0.8rem
-    }
-
     .flex {
       display: flex;
+    }
+
+    .flex-h {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .flex-1 {
+      flex: 1;
     }
 
     .h-70 {
@@ -117,14 +120,14 @@
 </head>
 
 <body>
-  <div id="container" class="w-100 h-70">
+  <div id="container" class="w-100 h-70 flex-h">
     <h1><a href="index.html" onclick="return onReset()">🥑</a> <span id="title"></span></h1>
     <form id="form" class="w-100 flex sticky" action="" onsubmit="return onSearch()">
       <input id="word" type="text" name="word" width="100%" style="width: 100%;" placeholder="search word"><br>
       <input type="submit" value="🔍" />
     </form>
     <div id="tip"></div>
-    <div id="rootsAndAffixes"></div>
+    <div id="rootsAndAffixes" class="flex-1"></div>
     <details>
       <summary>Log</summary>
       <div id="log"></div>
@@ -198,11 +201,13 @@
       tipEl.innerHTML = ""
       var logEl = document.getElementById("log")
       logEl.innerHTML = ""
+      logEl.parentElement.hidden = false
       addPToElement(
         tipEl,
         '"prefix-" is prefix word, "root" is root word, "-suffix" is suffix word',
         'red sp-_8 top-0',
       )
+      addPToElement(tipEl, `use ${data.useTime}ms`, 'red sp-_8 top-0',)
       var paths = data.paths
       if (null != data.exchange) {
         let exchange = data.exchange
@@ -247,6 +252,7 @@
       tipEl.innerHTML = ""
       var logEl = document.getElementById("log")
       logEl.innerHTML = ""
+      logEl.parentElement.hidden = true
       addPToElement(tipEl, "Support global use of `Ctrl+v` or `Commend+v`", "sp-_8 top-0 red")
       pushStateHistory("", null)
     }

@@ -20,10 +20,11 @@ class Path {
 }
 
 class Result {
-  constructor(exchange, paths, all) {
+  constructor(exchange, paths, all, useTime) {
     this.exchange = exchange
     this.paths = paths
     this.all = all
+    this.useTime = useTime
   }
 }
 
@@ -135,9 +136,10 @@ async function WordRootAffixes(word) {
 function findWordRootAffixes(word) {
   // Step 0.
   if (2 >= word.length) {
-    return new Result(null, [word])
+    return new Result(null, [word], [new Path(word, 0, word.length)], 0)
   }
   // Step 1.
+  var currentTime = new Date().getTime()
   var result
   if (wordExchangeMap.has(word)) {
     let exchange = wordExchangeMap.get(word)
@@ -146,6 +148,7 @@ function findWordRootAffixes(word) {
   } else {
     result = findLammeRootAffixes(word)
   }
+  result.useTime = new Date().getTime() - currentTime
   return result
 }
 
