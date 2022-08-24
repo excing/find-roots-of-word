@@ -4,6 +4,7 @@
 
 #### 查找规则
 
+0. 直接返回小于等于长度为 2 的单词
 1. 先获取单词原形，还原复数、比较级、过去式等单词形式
 2. 再通过穷举获得所有的词根词缀组合
 3. 然后去除不完整的组合，即该拼写组合 != 单词
@@ -19,6 +20,8 @@
   - 查找规则可能导致部分正确组合被过滤了
   - 问题1的延伸
   - 两个单词的组合词，比如 `honeyguide`
+3. 多组合
+  - 依然有可能返回多种词根词缀组合，比如 `agitation`
 
 #### 改进
 
@@ -30,11 +33,21 @@
 
 第三，添加词根词缀表示规则。比如，`^` 表示该词根词缀只能出现在单词开头，`$` 表示只能出现在单词结尾，其他详见 [root_affix_rule.csv](root_affix_rule.csv)。
 
-最后是对词根词缀进行打分，这是一个粗糙的想法，未经过验证，而且如何打分，也没有什么好的方案。
+最后是对词根词缀进行打分，这是一个粗糙的想法，未经过验证，而且如何打分，也没有什么好的思路。
 
 #### 测试
 
 项目测试地址：[Find root-affixes🍂 of word](https://excing.github.io/find-roots-of-word/index.html)
+
+#### 资源
+
+- 项目中使用到的词根词缀表：[Roots and affixes](roots-and-affixes.csv)
+- 项目中使用到的单词其他形式表：[Word exchanges](word-exchanges.csv)
+
+其中参考了以下开源项目的资源：
+
+- [lnkDrop/Match-Root](https://github.com/lnkDrop/Match-Root)
+- [skywind3000/ECDICT](https://github.com/skywind3000/ECDICT)
 
 ## LICENSE
 
