@@ -295,9 +295,7 @@ function findAvailablePrefixPath(word = "", symbol = "") {
     let symbolTemp = temp + symbol
     if (rootsAndAffixesMap.has(symbolTemp)) {
       let _paths = findAvailablePrefixPath(word.substring(0, i), symbol)
-      if (0 == _paths.length) {
-        paths.push(new Path(symbolTemp, i, temp.length))
-      }
+      paths.push(new Path(symbolTemp, i, temp.length))
       _paths.forEach(path => {
         paths = [
           new Path(path.value + "," + symbolTemp, path.start, temp.length + path.size),
@@ -315,9 +313,7 @@ function findAvailableSuffixPath(word = "", symbol = "") {
     let symbolTemp = symbol + temp
     if (rootsAndAffixesMap.has(symbolTemp)) {
       let _paths = findAvailableSuffixPath(word.substring(i), symbol)
-      if (0 == _paths.length) {
-        paths.push(new Path(symbolTemp, 0, temp.length))
-      }
+      paths.push(new Path(symbolTemp, 0, temp.length))
       _paths.forEach(path => {
         paths.push(new Path(symbolTemp + "," + path.value, 0, temp.length + path.size))
       })
