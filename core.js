@@ -20,9 +20,10 @@ class Path {
 }
 
 class Result {
-  constructor(exchange, paths) {
+  constructor(exchange, paths, all) {
     this.exchange = exchange
     this.paths = paths
+    this.all = all
   }
 }
 
@@ -137,12 +138,15 @@ function findWordRootAffixes(word) {
     return new Result(null, [word])
   }
   // Step 1.
+  var result
   if (wordExchangeMap.has(word)) {
     let exchange = wordExchangeMap.get(word)
-    let arr = findLammeRootAffixes(exchange.lamme)
-    return new Result(exchange, arr)
+    result = findLammeRootAffixes(exchange.lamme)
+    result.exchange = exchange
+  } else {
+    result = findLammeRootAffixes(word)
   }
-  return new Result(null, findLammeRootAffixes(word))
+  return result
 }
 
 function findLammeRootAffixes(lamme = "") {
@@ -180,6 +184,8 @@ function findLammeRootAffixes(lamme = "") {
       })
     })
   })
+
+  var all = availablePaths
 
   // Step 3.
   tempPaths = availablePaths
@@ -268,7 +274,7 @@ function findLammeRootAffixes(lamme = "") {
   availablePaths.forEach(path => {
     affixes.push(path.value)
   });
-  return affixes
+  return new Result(null, affixes, all)
 }
 
 function finAvailableRootPath(word) {

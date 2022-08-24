@@ -35,6 +35,25 @@
       text-decoration: none;
     }
 
+    details {
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      padding: 0.5rem 0.5rem 0;
+      margin-top: 2rem;
+    }
+
+    summary {
+      margin: -0.5rem -0.5rem 0;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    #rootsAndAffixes {
+      background-color: rgba(252, 255, 225, 0.5);
+      border-radius: 0.4rem;
+      padding: 0.1rem 0.8rem
+    }
+
     .flex {
       display: flex;
     }
@@ -61,6 +80,10 @@
 
     .sp-_8 {
       font-size: 0.8em;
+    }
+
+    .sp-1_2 {
+      font-size: 1.2em;
     }
 
     .top-0 {
@@ -100,7 +123,12 @@
       <input id="word" type="text" name="word" width="100%" style="width: 100%;" placeholder="search word"><br>
       <input type="submit" value="🔍" />
     </form>
+    <div id="tip"></div>
     <div id="rootsAndAffixes"></div>
+    <details>
+      <summary>Log</summary>
+      <div id="log"></div>
+    </details>
   </div>
   <div class="fixed-tr margin-_3">
     <a href="https://github.com/excing/find-roots-of-word" target="_blank">
@@ -166,21 +194,30 @@
       containerEl.classList.remove(CSS_CLASS_H_70)
       var rootsAndAffixesEl = document.getElementById("rootsAndAffixes")
       rootsAndAffixesEl.innerHTML = ""
+      var tipEl = document.getElementById("tip")
+      tipEl.innerHTML = ""
+      var logEl = document.getElementById("log")
+      logEl.innerHTML = ""
       addPToElement(
-        rootsAndAffixesEl,
+        tipEl,
         '"prefix-" is prefix word, "root" is root word, "-suffix" is suffix word',
         'red sp-_8 top-0',
       )
       var paths = data.paths
       if (null != data.exchange) {
-        addPToElement(rootsAndAffixesEl, `[${data.exchange.lamme}]: ${data.exchange.desc}`, "bold")
+        let exchange = data.exchange
+        addPToElement(rootsAndAffixesEl, `[${exchange.lamme}]: ${exchange.desc}`, "bold")
       }
       if (0 == paths.length) {
         addPToElement(rootsAndAffixesEl, "🍉 No available root-affix combinations were found", "bold")
       }
       paths.forEach(element => {
-        addPToElement(rootsAndAffixesEl, element)
-      });
+        addPToElement(rootsAndAffixesEl, element, "sp-1_2")
+      })
+      var allPath = data.all
+      allPath.forEach(path => {
+        addPToElement(logEl, path.value, "sp-_8")
+      })
     }
 
     function addPToElement(el, text, css = "") {
@@ -206,7 +243,11 @@
       containerEl.classList.add(CSS_CLASS_H_70)
       var rootsAndAffixesEl = document.getElementById("rootsAndAffixes")
       rootsAndAffixesEl.innerHTML = ""
-      addPToElement(rootsAndAffixesEl, "Support global use of `Ctrl+v` or `Commend+v`", "sp-_8 top-0 red")
+      var tipEl = document.getElementById("tip")
+      tipEl.innerHTML = ""
+      var logEl = document.getElementById("log")
+      logEl.innerHTML = ""
+      addPToElement(tipEl, "Support global use of `Ctrl+v` or `Commend+v`", "sp-_8 top-0 red")
       pushStateHistory("", null)
     }
 
