@@ -276,6 +276,18 @@
       pushStateHistory("", null)
     }
 
+    // QA: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
+    // 必须要先获取焦点
+    function selectInput(input) {
+      input.focus()
+      input.setSelectionRange(0, input.value.length)
+    }
+
+    // QA: https://stackoverflow.com/a/2520670
+    function cancelSelect() {
+      document.activeElement.blur()
+    }
+
     function init() {
       document.getElementById("title").innerText = TITLE
       var url = new URL(window.location)
@@ -301,7 +313,10 @@
 
     document.onmouseover = function (e) {
       if (e.target == document.getElementById("word")) {
-        e.target.select()
+        // e.target.select()
+        selectInput(e.target)
+      } else {
+        cancelSelect()
       }
     }
 
@@ -319,7 +334,8 @@
     window.addEventListener("keydown", (event) => {
       if ("Tab" == event.key && event.target == document.body) {
         event.preventDefault()
-        document.getElementById("word").select()
+        // document.getElementById("word").select()
+        selectInput(document.getElementById("word"))
       }
     })
 
