@@ -134,6 +134,27 @@
       position: sticky;
       top: 10px;
     }
+
+    /* CSS LOADER */
+    .loader {
+      border: 6px solid #efefef;
+      border-top: 6px solid #111;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1.2s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
@@ -146,6 +167,7 @@
       <input type="submit" value="🔍" />
     </form>
     <div id="tip" class="rl-_8"></div>
+    <div id="loader" class="loader" hidden></div>
     <div id="rootsAndAffixes" class="flex-1 rl-_8"></div>
     <details>
       <summary>Log</summary>
@@ -187,6 +209,7 @@
         reset()
         return
       }
+      loading(true)
       WordRootAffixes(word)
         .then(data => {
           if (data) {
@@ -195,12 +218,17 @@
           return []
         })
         .then(data => {
+          loading(false)
+          return data
+        })
+        .then(data => {
           console.log('Success:', data)
           setWordRootsAndAffixes(data)
           pushStateHistory(word, data)
         })
         .catch(err => {
           console.error(err)
+          loading(false)
         })
     }
 
@@ -261,6 +289,7 @@
     }
 
     function reset() {
+      loading(false)
       setSearchWordInput("")
       var containerEl = document.getElementById("container")
       containerEl.classList.remove(CSS_CLASS_H_MIN_100)
@@ -288,6 +317,11 @@
       document.activeElement.blur()
     }
 
+    function loading(visiable) {
+      var loader = document.getElementById("loader")
+      loader.hidden = !visiable
+    }
+
     function init() {
       document.getElementById("title").innerText = TITLE
       var url = new URL(window.location)
@@ -313,7 +347,6 @@
 
     document.onmouseover = function (e) {
       if (e.target == document.getElementById("word")) {
-        // e.target.select()
         selectInput(e.target)
       } else {
         cancelSelect()
@@ -334,7 +367,6 @@
     window.addEventListener("keydown", (event) => {
       if ("Tab" == event.key && event.target == document.body) {
         event.preventDefault()
-        // document.getElementById("word").select()
         selectInput(document.getElementById("word"))
       }
     })
