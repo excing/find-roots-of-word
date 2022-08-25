@@ -116,7 +116,7 @@ async function initWordExchangesResource() {
     .catch(err => console.error(err))
 }
 
-const domain = location.pathname.replace("/index.html", "")
+const domain = location.origin + location.pathname.replace("/index.html", "")
 const roots_and_affixes_csv_filename = 'roots-and-affixes.csv'
 const word_exchanges_csv_filename = 'word-exchanges.csv'
 const roots_and_affixes_csv_url = `${domain}/${roots_and_affixes_csv_filename}`
