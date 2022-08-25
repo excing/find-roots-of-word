@@ -166,7 +166,11 @@
         placeholder="search word">
       <input type="submit" value="🔍" />
     </form>
-    <div id="tip" class="rl-_8"></div>
+    <div class="rl-_8 flex">
+      <div id="tip"></div>
+      <a class="sp-_8 rl-_8" href="https://github.com/login/oauth/authorize?client_id=Iv1.26792a5af3379280&state=hello">
+        GitHub</a>
+    </div>
     <div id="loader" class="loader" hidden></div>
     <div id="rootsAndAffixes" class="flex-1 rl-_8"></div>
     <details>
@@ -330,6 +334,7 @@
         var word = params.get("word")
         setSearchWordInput(word)
         search(word)
+      } else if (params.has("code")) {
       } else {
         reset()
       }
@@ -340,7 +345,7 @@
       if (state && "" != state.word) {
         setSearchWordInput(state.word)
         setWordRootsAndAffixes(state.data)
-      } else {
+      } else if (state) {
         reset()
       }
     }
