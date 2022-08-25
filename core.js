@@ -130,7 +130,7 @@ async function WordRootAffixes(word) {
   // QA: https://stackoverflow.com/questions/46241827/fetch-api-requesting-multiple-get-requests
   return Promise
     .all([initRootsAndAffixesResource(), initWordExchangesResource()])
-    .then(_ => findWordRootAffixes(word))
+    .then(_ => findWordRootAffixes(word.toLowerCase()))
 }
 
 function findWordRootAffixes(word) {
