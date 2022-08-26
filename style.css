@@ -1,0 +1,183 @@
+    body {
+      display        : flex;
+      align-items    : center;
+      justify-content: center;
+      max-width      : 1080px;
+      margin         : auto;
+      padding        : 8px;
+      font-size      : 1.2rem;
+    }
+
+    h1 {
+      color     : rgb(170, 170, 170);
+      text-align: center;
+    }
+
+    textarea,
+    input {
+      font-size       : 1.2rem;
+      padding         : 0.8rem 1rem;
+      border-radius   : 4px;
+      background-color: transparent;
+      border          : none;
+      color           : rgba(0, 0, 0, .87);
+      word-wrap       : break-word;
+      outline         : none;
+      display         : flex;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding  : 7px;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    details {
+      border       : 1px solid #efefef;
+      border-radius: 4px;
+      padding      : 0.5rem 0.5rem 0;
+      margin-top   : 0.8rem;
+    }
+
+    summary {
+      margin   : -0.5rem -0.5rem 0;
+      padding  : 0.5rem;
+      font-size: 1rem;
+    }
+
+    #form {
+      border          : 1px solid #dfdfdf;
+      box-shadow      : none;
+      border-radius   : 28px;
+      background-color: white;
+    }
+
+    /* QA: https://developer.mozilla.org/zh-CN/docs/Web/CSS/:focus-within */
+    #form:focus-within,
+    #form:hover {
+      border    : 1px solid #cbcbcb;
+      box-shadow: 2px 4px 5px #ddd;
+    }
+
+    .flex {
+      display    : flex;
+      align-items: center;
+    }
+
+    .flex-h {
+      display       : flex;
+      flex-direction: column;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    .h-70 {
+      height    : 70%;
+      min-height: 70%;
+      max-height: 70%;
+    }
+
+    .h-min-100 {
+      min-height: 100%;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .wh-1em {
+      width : 1em;
+      height: 1em;
+    }
+
+    .wh-60px {
+      width : 60px;
+      height: 60px;
+    }
+
+    .wh-80px {
+      width : 80px;
+      height: 80px;
+    }
+
+    .red {
+      color: red;
+    }
+
+    .sp-_8 {
+      font-size: 0.8em;
+    }
+
+    .sp-1_2 {
+      font-size: 1.2em;
+    }
+
+    .top-0 {
+      margin-top        : 0px;
+      margin-block-start: 0px;
+    }
+
+    .top-1 {
+      margin-top: 1rem;
+    }
+
+    .left-_5 {
+      margin-left: 0.5rem;
+    }
+
+    .rl-_8 {
+      margin-left : 0.8rem;
+      margin-right: 0.8rem;
+    }
+
+    .text-c {
+      text-align: center;
+    }
+
+    .bold {
+      font-weight: bold;
+    }
+
+    .sticky {
+      position: sticky;
+      top     : 10px;
+    }
+
+    .abs-tr {
+      position: absolute;
+      top     : 0;
+      right   : 0
+    }
+
+    .gone {
+      display: none;
+    }
+
+    /* CSS LOADER */
+    .loader {
+      border       : 6px solid #efefef;
+      border-top   : 6px solid #111;
+      border-radius: 50%;
+      animation    : spin 1.2s linear infinite;
+      margin       : 0 auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ICON */
+    .ic-github {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 250' fill='%23fff'%3E%3Cpath d='M0 0l115 115h15l12 27 108 108V0z' fill='%23111' /%3E%3Cpath class='octo-arm' d='M128 109c-15-9-9-19-9-19 3-7 2-11 2-11-1-7 3-2 3-2 4 5 2 11 2 11-3 10 5 15 9 16'/%3E%3Cpath class='octo-body' d='M115 115s4 2 5 0l14-14c3-2 6-3 8-3-8-11-15-24 2-41 5-5 10-7 16-7 1-2 3-7 12-11 0 0 5 3 7 16 4 2 8 5 12 9s7 8 9 12c14 3 17 7 17 7-4 8-9 11-11 11 0 6-2 11-7 16-16 16-30 10-41 2 0 3-1 7-5 11l-12 11c-1 1 1 5 1 5z' /%3E%3C/svg%3E");
+    }
