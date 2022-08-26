@@ -38,6 +38,7 @@
     const CSS_CLASS_H_70 = "h-70"
     const CSS_CLASS_H_MIN_100 = "h-min-100"
     const TITLE = "Root-affixes 🍂"
+    const ISSUE_TITLE_SUFFIX = " -- Bad root-affix combinations"
     const URL_INDEX = location.origin + location.pathname
 
     const ID_LOADER = "loader"
@@ -59,7 +60,7 @@
     function onSearch() {
       var wordEl = document.getElementById("word")
       search(wordEl.value)
-      checkGithubIssue()
+      userLoginGithub()
 
       return false
     }
@@ -183,16 +184,37 @@
       visiable(ID_REPORT_LOADER, true)
       AccessGithubToken(code, state, URL_INDEX)
         .then(reportStatusBad)
-        .then(reportBadCombinations)
+        .then(checkGithubIssue(reportBadCombinations))
         .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
     }
 
-    function checkGithubIssue() {
+    function userLoginGithub() {
       visiable(ID_REPORT_LOADER, false)
       visiable(ID_REPORT, true)
       LoginGithub()
-        .then(reportStatusBad, reportStatusLogin)
+        .then(checkGithubIssue(reportStatusBad), reportStatusLogin)
         .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
+    }
+
+    function checkGithubIssue(_404) {
+      var urlParams = new URL(location).searchParams
+      if (!urlParams.has("word")) {
+        visiable(ID_REPORT, false)
+        return
+      }
+      var word = urlParams.get("word")
+      var title = joinIssueTitle(word)
+      GithubIssue(title)
+        .then(issue => {
+          if ("open" === issue.state) {
+            reportStatusSent(issue.html_url)
+          } else {
+            reportStatusFixed(issue.html_url)
+          }
+        })
+        .catch(err => {
+          _404()
+        })
     }
 
     function reportBadCombinations() {
@@ -201,15 +223,21 @@
 
       var word = urlParams.get("word")
       var result = WordHistoryResult(word)
-      var title = `"${word}" -- Bad root-affix combinations`
+      var title = joinIssueTitle(word)
       var label = result.label()
       var content = result.markdown()
       content += `\n\n## Test address`
       content += `\n\n[${word} -- Find root-affixes🍂 of word](${location.href})`
-      content += `\n\n----\n\nFrom [**FindRootsOfWord Bot**](https://github.com/apps/findrootsofword)`
       visiable(ID_REPORT_LOADER, true)
+      onClick(ID_REPORT_STATUS, () => {
+        return false
+      })
       CreateGithubIssue(title, content, label)
-        .then(reportStatusSent)
+        .then(issue => reportStatusSent(issue.html_url))
+    }
+
+    function joinIssueTitle(word) {
+      return `${word}${ISSUE_TITLE_SUFFIX}`
     }
 
     function reportStatusLogin(text = REPORT_STATUS_LOGIN) {
@@ -233,18 +261,20 @@
       })
     }
 
-    function reportStatusSent() {
+    function reportStatusSent(url) {
       visiable(ID_REPORT_LOADER, false)
       innerText(ID_REPORT_STATUS, REPORT_STATUS_SENT)
       onClick(ID_REPORT_STATUS, () => {
+        window.open(url)
         return false
       })
     }
 
-    function reportStatusFixed() {
+    function reportStatusFixed(url) {
       visiable(ID_REPORT_LOADER, false)
       innerText(ID_REPORT_STATUS, REPORT_STATUS_FIXED)
       onClick(ID_REPORT_STATUS, () => {
+        window.open(url)
         return false
       })
     }
@@ -277,7 +307,7 @@
         var word = params.get("word")
         setSearchWordInput(word)
         search(word)
-        checkGithubIssue()
+        userLoginGithub()
       } else if (params.has("code") && params.has("state")) {
         var code = params.get("code")
         var word = params.get("state")
@@ -294,7 +324,7 @@
       if (state && "" != state.word) {
         setSearchWordInput(state.word)
         setWordRootsAndAffixes(state.data)
-        checkGithubIssue()
+        userLoginGithub()
       } else if (state) {
         reset()
       }

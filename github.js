@@ -2,6 +2,22 @@
 
 const GITHUB_CLIENT_ID = "Iv1.26792a5af3379280"
 const GITHUB_CLIENT_SECRET = "a22c85062021e8e85a13a145d2813978d817cfaf"
+const REPO_OWNER = "excing"
+const REPO_NAME = "find-roots-of-word"
+
+const historyIssues = new Map()
+
+async function GithubIssue(title) {
+  if (historyIssues.has(title)) {
+    var issue =historyIssues.get(title)
+    if (issue) {
+      return Promise.resolve(issue)
+    } else {
+      return Promise.reject()
+    }
+  }
+  return getGithubIssue(title)
+}
 
 async function CreateGithubIssue(title, body, label) {
   var token = localStorage.getItem("access_token")
@@ -9,7 +25,7 @@ async function CreateGithubIssue(title, body, label) {
     token,
     title,
     body,
-    [label, , "invalid"])
+    [label, "invalid"])
 }
 
 function AuthorizeGithub(state, redirect_uri) {
@@ -60,12 +76,7 @@ async function postAccessGithubToken(formData) {
     cache: 'no-cache',
     body: formData,
   })
-    .then(response => {
-      if (!response.ok) {
-        throw `Get github access token failed: ${response.statusText}`
-      }
-      return response
-    })
+    .then(responseOK)
     .then(response => response.text())
     .then(text => new URL("access_token?" + text, location.origin).searchParams)
     .then(params => {
@@ -89,7 +100,7 @@ async function postGithubIssue(token, title, content, labels) {
     body: content,
     labels: labels,
   }
-  return fetch("https://api.github.com/repos/excing/find-roots-of-word/issues", {
+  return fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`, {
     method: "POST",
     cache: "no-cache",
     headers: {
@@ -98,12 +109,36 @@ async function postGithubIssue(token, title, content, labels) {
     },
     body: JSON.stringify(data),
   })
-    .then(response => {
-      if (!response.ok) {
-        throw `Get github access token failed: ${response.statusText}`
-      }
-      return response
-    })
+    .then(responseOK)
     .then(response => response.json())
-    .then(data => data.number)
+}
+
+// QA: https://docs.github.com/cn/rest/search#search-issues-and-pull-requests
+// QA: https://docs.github.com/cn/rest/search#constructing-a-search-query
+// QA: https://docs.github.com/cn/search-github/searching-on-github/searching-issues-and-pull-requests
+// TEST: https://api.github.com/search/issues?q=is:issue subterranean -- Bad root-affix combinations in:title repo:excing/find-roots-of-word
+async function getGithubIssue(title) {
+  var queryString = "q=" + encodeURIComponent(`is:issue ${title} in:title repo:${REPO_OWNER}/${REPO_NAME}`)
+  return fetch(`https://api.github.com/search/issues?${queryString}`)
+    .then(responseOK)
+    .then(response => response.json())
+    .then(data => {
+      if (0 == data.total_count) {
+        throw `No result`
+      }
+      for (let index = 0; index < data.items.length; index++) {
+        const issue = data.items[index];
+        if (issue.title == title) {
+          return issue
+        }
+      }
+      throw `No result`
+    })
+}
+
+function responseOK(response) {
+  if (!response.ok) {
+    throw `${response.method}: ${response.statusText}`
+  }
+  return response
 }
