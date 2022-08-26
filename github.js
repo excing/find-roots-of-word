@@ -9,7 +9,7 @@ const historyIssues = new Map()
 
 async function GithubIssue(title) {
   if (historyIssues.has(title)) {
-    var issue =historyIssues.get(title)
+    var issue = historyIssues.get(title)
     if (issue) {
       return Promise.resolve(issue)
     } else {
@@ -111,6 +111,10 @@ async function postGithubIssue(token, title, content, labels) {
   })
     .then(responseOK)
     .then(response => response.json())
+    .then(issue => {
+      historyIssues.set(title, issue)
+      return issue
+    })
 }
 
 // QA: https://docs.github.com/cn/rest/search#search-issues-and-pull-requests
@@ -123,15 +127,14 @@ async function getGithubIssue(title) {
     .then(responseOK)
     .then(response => response.json())
     .then(data => {
-      if (0 == data.total_count) {
-        throw `No result`
-      }
       for (let index = 0; index < data.items.length; index++) {
         const issue = data.items[index];
         if (issue.title == title) {
+          historyIssues.set(title, issue)
           return issue
         }
       }
+      historyIssues.set(title, null)
       throw `No result`
     })
 }

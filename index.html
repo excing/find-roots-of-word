@@ -46,6 +46,9 @@
     const ID_REPORT = "report"
     const ID_REPORT_STATUS = "reportStatus"
 
+    const REPORT_STATUS_AUTHING = "Github authentication in progress"
+    const REPORT_STATUS_GETTING = "Getting Github issue status"
+    const REPORT_STATUS_SENDING = "Sending"
     const REPORT_STATUS_BAD = "Bad root-affixes, report to GitHub"
     const REPORT_STATUS_LOGIN = "Bad root-affixes, login to Github to report"
     const REPORT_STATUS_SENT = "The bad root-affixes has been sent"
@@ -109,8 +112,6 @@
       var logEl = document.getElementById("log")
       logEl.innerHTML = ""
       logEl.parentElement.hidden = false
-      var reportEl = document.getElementById(ID_REPORT)
-      reportEl.hidden = false
       var paths = data.paths
       var combinationUnit = 1 == paths.length ? "combination" : "combinations"
       addPToElement(
@@ -145,6 +146,8 @@
       let stateObj = { word: word, data: data, };
       if ("" === word) {
         history.replaceState(stateObj, TITLE, "index.html");
+      } else if (null == data) {
+        history.replaceState(stateObj, word + " —— " + TITLE, "?word=" + word);
       } else {
         history.pushState(stateObj, word + " —— " + TITLE, "?word=" + word);
       }
@@ -181,28 +184,29 @@
     }
 
     function accessGithubToken(code, state) {
-      visiable(ID_REPORT_LOADER, true)
+      visiable(ID_REPORT, true)
+      reportStatusAuthing()
       AccessGithubToken(code, state, URL_INDEX)
-        .then(reportStatusBad)
+        .then(reportStatusSending)
         .then(checkGithubIssue(reportBadCombinations))
         .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
     }
 
     function userLoginGithub() {
-      visiable(ID_REPORT_LOADER, false)
       visiable(ID_REPORT, true)
+      reportStatusGetting()
       LoginGithub()
         .then(checkGithubIssue(reportStatusBad), reportStatusLogin)
         .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
     }
 
     function checkGithubIssue(_404) {
-      var urlParams = new URL(location).searchParams
-      if (!urlParams.has("word")) {
+      var wordEl = document.getElementById("word")
+      var word = wordEl.value
+      if (!word) {
         visiable(ID_REPORT, false)
         return
       }
-      var word = urlParams.get("word")
       var title = joinIssueTitle(word)
       GithubIssue(title)
         .then(issue => {
@@ -228,10 +232,7 @@
       var content = result.markdown()
       content += `\n\n## Test address`
       content += `\n\n[${word} -- Find root-affixes🍂 of word](${location.href})`
-      visiable(ID_REPORT_LOADER, true)
-      onClick(ID_REPORT_STATUS, () => {
-        return false
-      })
+      reportStatusSending()
       CreateGithubIssue(title, content, label)
         .then(issue => reportStatusSent(issue.html_url))
     }
@@ -248,6 +249,30 @@
         if (!urlParams.has("word")) return
 
         AuthorizeGithub(urlParams.get("word"), URL_INDEX)
+        return false
+      })
+    }
+
+    function reportStatusAuthing() {
+      visiable(ID_REPORT_LOADER, true)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_AUTHING)
+      onClick(ID_REPORT_STATUS, () => {
+        return false
+      })
+    }
+
+    function reportStatusGetting() {
+      visiable(ID_REPORT_LOADER, true)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_GETTING)
+      onClick(ID_REPORT_STATUS, () => {
+        return false
+      })
+    }
+
+    function reportStatusSending() {
+      visiable(ID_REPORT_LOADER, true)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_SENDING)
+      onClick(ID_REPORT_STATUS, () => {
         return false
       })
     }
