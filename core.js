@@ -26,6 +26,35 @@ class Result {
     this.all = all
     this.useTime = useTime
   }
+
+  markdown() {
+    var str = "## Final combinations\n"
+    if (0 == this.paths.length) {
+      str += `\n**No available root-affix combinations were found.**`
+    }
+    this.paths.forEach(path => {
+      str += `\n- ${path}`
+    })
+    if (1 < this.paths.length) {
+      str += `\n\n**Too many combinations.**`
+    }
+    str += `\n\nTakes ${this.useTime}ms`
+    if (this.exchange) {
+      var exchange = this.exchange
+      str += `\n\nThe **${exchange.desc}** of \`${exchange.lamme}\``
+    }
+    return str
+  }
+
+  label() {
+    if (0 == this.paths.length) {
+      return "No result"
+    } else if (1 < this.paths.length) {
+      return "Many combinations"
+    } else {
+      return "Bad combination"
+    }
+  }
 }
 
 async function initRootsAndAffixesResource() {
@@ -124,6 +153,7 @@ const word_exchanges_csv_url = `${domain}/${word_exchanges_csv_filename}`
 
 const rootsAndAffixesMap = new Map()
 const wordExchangeMap = new Map()
+const historyResult = new Map()
 
 // WordRootAffixes is find root-affixes of word
 async function WordRootAffixes(word) {
@@ -133,9 +163,13 @@ async function WordRootAffixes(word) {
     .then(_ => findWordRootAffixes(word.toLowerCase()))
 }
 
+function WordHistoryResult(word) {
+  return historyResult.get(word)
+}
+
 function findWordRootAffixes(word) {
   // Step 0.
-  if (2 >= word.length) {
+  if (word.length <= 2) {
     return new Result(null, [word], [new Path(word, 0, word.length)], 0)
   }
   // Step 1.
@@ -143,12 +177,20 @@ function findWordRootAffixes(word) {
   var result
   if (wordExchangeMap.has(word)) {
     let exchange = wordExchangeMap.get(word)
+    if (exchange.lamme.length <= 2) {
+      return new Result(
+        exchange,
+        [exchange.lamme],
+        [new Path(exchange.lamme, 0, exchange.lamme.length)],
+      )
+    }
     result = findLammeRootAffixes(exchange.lamme)
     result.exchange = exchange
   } else {
     result = findLammeRootAffixes(word)
   }
   result.useTime = new Date().getTime() - currentTime
+  historyResult.set(word, result)
   return result
 }
 
@@ -194,7 +236,6 @@ function findLammeRootAffixes(lamme = "") {
   tempPaths = availablePaths
   availablePaths = []
   tempPaths.forEach(path => {
-    console.log(`find ${path.value}`);
     if (path.start == 0 && path.start + path.size == lamme.length) {
       availablePaths.push(path)
     }
