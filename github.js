@@ -9,7 +9,7 @@ async function CreateGithubIssue(title, body, label) {
     token,
     title,
     body,
-    [label,])
+    [label, , "invalid"])
 }
 
 function AuthorizeGithub(state, redirect_uri) {
@@ -20,15 +20,15 @@ function LoginGithub() {
   var token = localStorage.getItem("access_token")
   if (!token || token === "") {
     // QA: https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/reject
-    return Promise.reject("unlogin")
+    return Promise.reject()
   }
   var expiresTime = localStorage.getItem("expires_time")
   if (new Date().getTime() < new Number(expiresTime)) {
-    return Promise.resolve(token)
+    return Promise.resolve()
   }
   var refreshTokenExpiresTime = localStorage.getItem("refresh_token_expires_time")
   if (new Number(refreshTokenExpiresTime) < new Date().getTime()) {
-    return Promise.reject("unlogin")
+    return Promise.reject()
   }
   // 使用 refresh token 刷新当前 token
 
@@ -81,6 +81,7 @@ async function postAccessGithubToken(formData) {
 }
 
 // QA: https://docs.github.com/cn/rest/issues/issues#create-an-issue
+// QA: https://github.com/excing/find-roots-of-word/labels
 async function postGithubIssue(token, title, content, labels) {
   if (!token) return Promise.reject()
   var data = {
