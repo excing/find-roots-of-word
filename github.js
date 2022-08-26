@@ -53,7 +53,7 @@ function LoginGithub() {
   formData.append("client_id", GITHUB_CLIENT_ID)
   formData.append("client_secret", GITHUB_CLIENT_SECRET)
   formData.append("refresh_token", refreshToken)
-  formData.append("grant_type", refreshToken)
+  formData.append("grant_type", "refresh_token")
   return postAccessGithubToken(formData)
 }
 
@@ -74,20 +74,28 @@ async function postAccessGithubToken(formData) {
     method: "POST",
     // mode: 'no-cors',
     cache: 'no-cache',
+    headers: {
+      Accept: "application/vnd.github+json",
+    },
     body: formData,
   })
     .then(responseOK)
-    .then(response => response.text())
-    .then(text => new URL("access_token?" + text, location.origin).searchParams)
-    .then(params => {
-      let expiresIn = new Number(params.get("expires_in")) * 1000 // 原单位为秒
-      let refreshTokenExpiresIn = new Number(params.get("refresh_token_expires_in")) * 1000
-      localStorage.setItem("access_token", params.get("access_token"))
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        throw data.error
+      }
+      return data
+    })
+    .then(data => {
+      let expiresIn = new Number(data.expires_in) * 1000 // 原单位为秒
+      let refreshTokenExpiresIn = new Number(data.refresh_token_expires_in) * 1000
+      localStorage.setItem("access_token", data.access_token)
       localStorage.setItem("expires_time", new Date().getTime() + expiresIn)
-      localStorage.setItem("refresh_token", params.get("refresh_token"))
+      localStorage.setItem("refresh_token", data.refresh_token)
       localStorage.setItem("refresh_token_expires_time", new Date().getTime() + refreshTokenExpiresIn)
-      localStorage.setItem("scope", params.get("scope"))
-      localStorage.setItem("token_type", params.get("token_type"))
+      localStorage.setItem("scope", data.scope)
+      localStorage.setItem("token_type", data.token_type)
     })
 }
 
