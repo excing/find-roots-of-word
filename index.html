@@ -143,13 +143,13 @@
     }
 
     function pushStateHistory(word, data) {
-      let stateObj = { word: word, data: data, };
+      let stateObj = { word: word, data: data, }
       if ("" === word) {
-        history.replaceState(stateObj, TITLE, "index.html");
+        history.replaceState(stateObj, TITLE, "index.html")
       } else if (null == data) {
-        history.replaceState(stateObj, word + " —— " + TITLE, "?word=" + word);
+        history.replaceState(stateObj, word + " —— " + TITLE, "?word=" + word)
       } else {
-        history.pushState(stateObj, word + " —— " + TITLE, "?word=" + word);
+        history.pushState(stateObj, word + " —— " + TITLE, "?word=" + word)
       }
     }
 
@@ -371,7 +371,7 @@
 
       setSearchWordInput(paste)
 
-      event.preventDefault();
+      event.preventDefault()
     })
 
     window.addEventListener("keydown", (event) => {

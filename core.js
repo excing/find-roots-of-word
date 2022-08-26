@@ -317,7 +317,7 @@ function findLammeRootAffixes(lamme = "") {
   var affixes = []
   availablePaths.forEach(path => {
     affixes.push(path.value)
-  });
+  })
   return new Result(null, affixes, all)
 }
 

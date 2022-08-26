@@ -128,7 +128,7 @@ async function getGithubIssue(title) {
     .then(response => response.json())
     .then(data => {
       for (let index = 0; index < data.items.length; index++) {
-        const issue = data.items[index];
+        const issue = data.items[index]
         if (issue.title == title) {
           historyIssues.set(title, issue)
           return issue
