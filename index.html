@@ -3,159 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
   <title>Find root-affixes🍂 of word</title>
-
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: 1080px;
-      margin: auto;
-      padding: 8px;
-      font-size: 1.2rem;
-    }
-
-    h1 {
-      color: rgb(170, 170, 170);
-      text-align: center;
-    }
-
-    textarea,
-    input {
-      font-size: 1.2rem;
-      padding: 0.8rem 1rem;
-      border-radius: 4px;
-      background-color: transparent;
-      border: none;
-      color: rgba(0, 0, 0, .87);
-      word-wrap: break-word;
-      outline: none;
-      display: flex;
-    }
-
-    button {
-      font-size: 1.2rem;
-      padding: 7px;
-    }
-
-    a {
-      text-decoration: none;
-    }
-
-    details {
-      border: 1px solid #efefef;
-      border-radius: 4px;
-      padding: 0.5rem 0.5rem 0;
-      margin-top: 2rem;
-    }
-
-    summary {
-      margin: -0.5rem -0.5rem 0;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-
-    #form {
-      border: 1px solid #dfdfdf;
-      box-shadow: none;
-      border-radius: 28px;
-      background-color: white;
-    }
-
-    /* QA: https://developer.mozilla.org/zh-CN/docs/Web/CSS/:focus-within */
-    #form:focus-within,
-    #form:hover {
-      border: 1px solid #cbcbcb;
-      box-shadow: 2px 4px 5px #ddd;
-    }
-
-    .flex {
-      display: flex;
-    }
-
-    .flex-h {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .flex-1 {
-      flex: 1;
-    }
-
-    .h-70 {
-      height: 70%;
-      min-height: 70%;
-      max-height: 70%;
-    }
-
-    .h-min-100 {
-      min-height: 100%;
-    }
-
-    .w-100 {
-      width: 100%;
-    }
-
-    .red {
-      color: red;
-    }
-
-    .sp-_8 {
-      font-size: 0.8em;
-    }
-
-    .sp-1_2 {
-      font-size: 1.2em;
-    }
-
-    .top-0 {
-      margin-top: 0px;
-      margin-block-start: 0px;
-    }
-
-    .top-1 {
-      margin-top: 1rem;
-    }
-
-    .rl-_8 {
-      margin-left: 0.8rem;
-      margin-right: 0.8rem;
-    }
-
-    .text-c {
-      text-align: center;
-    }
-
-    .bold {
-      font-weight: bold;
-    }
-
-    .sticky {
-      position: sticky;
-      top: 10px;
-    }
-
-    /* CSS LOADER */
-    .loader {
-      border: 6px solid #efefef;
-      border-top: 6px solid #111;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1.2s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
-
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -168,33 +16,40 @@
     </form>
     <div class="rl-_8 flex">
       <div id="tip"></div>
-      <!-- <a class="sp-_8 rl-_8" href="https://github.com/login/oauth/authorize?client_id=Iv1.26792a5af3379280&state=hello">
-        GitHub</a> -->
     </div>
-    <div id="loader" class="loader" hidden></div>
+    <div id="loader" class="loader wh-60px" hidden></div>
     <div id="rootsAndAffixes" class="flex-1 rl-_8"></div>
+    <div class="flex">
+      <div class="flex-1"></div>
+      <div id="report" class="flex" hidden>
+        <a id="reportStatus" class="sp-_8" href="#report"></a>
+        <div id="reportLoader" class="loader wh-1em" hidden></div>
+      </div>
+    </div>
     <details>
       <summary>Log</summary>
       <div id="log"></div>
     </details>
   </div>
-  <div>
-    <a href="https://github.com/excing/find-roots-of-word" target="_blank">
-      <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 250 250" fill="#fff"
-        style="position: absolute; top: 0; right: 0">
-        <path d="M0 0l115 115h15l12 27 108 108V0z" fill="#111" />
-        <path class="octo-arm" d="M128 109c-15-9-9-19-9-19 3-7 2-11 2-11-1-7 3-2 3-2 4 5 2 11 2 11-3 10 5 15 9 16"
-          style="-webkit-transform-origin: 130px 106px; transform-origin: 130px 106px" />
-        <path class="octo-body"
-          d="M115 115s4 2 5 0l14-14c3-2 6-3 8-3-8-11-15-24 2-41 5-5 10-7 16-7 1-2 3-7 12-11 0 0 5 3 7 16 4 2 8 5 12 9s7 8 9 12c14 3 17 7 17 7-4 8-9 11-11 11 0 6-2 11-7 16-16 16-30 10-41 2 0 3-1 7-5 11l-12 11c-1 1 1 5 1 5z" />
-      </svg>
-    </a>
-  </div>
+  <a href="https://github.com/excing/find-roots-of-word" target="_blank" class="abs-tr ic-github wh-80px"></a>
   <script src="core.js"></script>
+  <script src="github.js"></script>
   <script>
     const CSS_CLASS_H_70 = "h-70"
     const CSS_CLASS_H_MIN_100 = "h-min-100"
     const TITLE = "Root-affixes 🍂"
+    const URL_INDEX = location.origin + location.pathname
+
+    const ID_LOADER = "loader"
+    const ID_REPORT_LOADER = "reportLoader"
+    const ID_REPORT = "report"
+    const ID_REPORT_STATUS = "reportStatus"
+
+    const REPORT_STATUS_BAD = "Bad root-affixes, report to GitHub"
+    const REPORT_STATUS_LOGIN = "Bad root-affixes, login to Github to report"
+    const REPORT_STATUS_SENT = "The bad root-affixes has been sent"
+    const REPORT_STATUS_FIXED = "The bad root-affixes has been fixed"
+    const REPORT_STATUS_RELOGIN = "⚠️ Login failed, please try again"
 
     function onReset() {
       reset()
@@ -204,6 +59,7 @@
     function onSearch() {
       var wordEl = document.getElementById("word")
       search(wordEl.value)
+      checkGithubIssue()
 
       return false
     }
@@ -213,7 +69,7 @@
         reset()
         return
       }
-      loading(true)
+      visiable(ID_LOADER, true)
       WordRootAffixes(word)
         .then(data => {
           if (data) {
@@ -222,17 +78,16 @@
           return []
         })
         .then(data => {
-          loading(false)
+          visiable(ID_LOADER, false)
           return data
         })
         .then(data => {
-          console.log('Success:', data)
           setWordRootsAndAffixes(data)
           pushStateHistory(word, data)
         })
         .catch(err => {
           console.error(err)
-          loading(false)
+          visiable(ID_LOADER, false)
         })
     }
 
@@ -253,6 +108,8 @@
       var logEl = document.getElementById("log")
       logEl.innerHTML = ""
       logEl.parentElement.hidden = false
+      var reportEl = document.getElementById(ID_REPORT)
+      reportEl.hidden = false
       var paths = data.paths
       var combinationUnit = 1 == paths.length ? "combination" : "combinations"
       addPToElement(
@@ -293,7 +150,8 @@
     }
 
     function reset() {
-      loading(false)
+      visiable(ID_LOADER, false)
+      visiable(ID_REPORT, false)
       setSearchWordInput("")
       var containerEl = document.getElementById("container")
       containerEl.classList.remove(CSS_CLASS_H_MIN_100)
@@ -321,20 +179,111 @@
       document.activeElement.blur()
     }
 
-    function loading(visiable) {
-      var loader = document.getElementById("loader")
-      loader.hidden = !visiable
+    function accessGithubToken(code, state) {
+      visiable(ID_REPORT_LOADER, true)
+      AccessGithubToken(code, state, URL_INDEX)
+        .then(reportStatusBad)
+        .then(reportBadCombinations)
+        .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
+    }
+
+    function checkGithubIssue() {
+      visiable(ID_REPORT_LOADER, false)
+      visiable(ID_REPORT, true)
+      LoginGithub()
+        .then(reportStatusBad, reportStatusLogin)
+        .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
+    }
+
+    function reportBadCombinations() {
+      var urlParams = new URL(location).searchParams
+      if (!urlParams.has("word")) return
+
+      var word = urlParams.get("word")
+      var result = WordHistoryResult(word)
+      var title = `"${word}" -- Bad root-affix combinations`
+      var label = result.label()
+      var content = result.markdown()
+      content += `\n\n## Test address`
+      content += `\n\n[${word} -- Find root-affixes🍂 of word](${location.href})`
+      content += `\n\n----\n\nFrom [**FindRootsOfWord Bot**](https://github.com/apps/findrootsofword)`
+      visiable(ID_REPORT_LOADER, true)
+      CreateGithubIssue(title, content, label)
+        .then(reportStatusSent)
+    }
+
+    function reportStatusLogin(text = REPORT_STATUS_LOGIN) {
+      visiable(ID_REPORT_LOADER, false)
+      innerText(ID_REPORT_STATUS, text)
+      onClick(ID_REPORT_STATUS, () => {
+        var urlParams = new URL(location).searchParams
+        if (!urlParams.has("word")) return
+
+        AuthorizeGithub(urlParams.get("word"), URL_INDEX)
+        return false
+      })
+    }
+
+    function reportStatusBad() {
+      visiable(ID_REPORT_LOADER, false)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_BAD)
+      onClick(ID_REPORT_STATUS, () => {
+        reportBadCombinations()
+        return false
+      })
+    }
+
+    function reportStatusSent() {
+      visiable(ID_REPORT_LOADER, false)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_SENT)
+      onClick(ID_REPORT_STATUS, () => {
+        return false
+      })
+    }
+
+    function reportStatusFixed() {
+      visiable(ID_REPORT_LOADER, false)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_FIXED)
+      onClick(ID_REPORT_STATUS, () => {
+        return false
+      })
+    }
+
+    function onClick(id, fn) {
+      var el = document.getElementById(id)
+      el.onclick = fn
+    }
+
+    function innerText(id, text) {
+      var el = document.getElementById(id)
+      el.innerText = text
+    }
+
+    function visiable(id, visiable) {
+      var el = document.getElementById(id)
+      if (visiable) {
+        el.classList.remove("gone")
+      } else {
+        el.classList.add("gone")
+      }
+      el.hidden = !visiable
     }
 
     function init() {
-      document.getElementById("title").innerText = TITLE
+      innerText("title", TITLE)
       var url = new URL(window.location)
       var params = url.searchParams
       if (params.has("word")) {
         var word = params.get("word")
         setSearchWordInput(word)
         search(word)
-      } else if (params.has("code")) {
+        checkGithubIssue()
+      } else if (params.has("code") && params.has("state")) {
+        var code = params.get("code")
+        var word = params.get("state")
+        setSearchWordInput(word)
+        search(word)
+        accessGithubToken(code, word)
       } else {
         reset()
       }
@@ -345,6 +294,7 @@
       if (state && "" != state.word) {
         setSearchWordInput(state.word)
         setWordRootsAndAffixes(state.data)
+        checkGithubIssue()
       } else if (state) {
         reset()
       }
