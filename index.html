@@ -49,6 +49,7 @@
     const REPORT_STATUS_AUTHING = "Github authentication in progress"
     const REPORT_STATUS_GETTING = "Getting Github issue status"
     const REPORT_STATUS_SENDING = "Sending"
+    const REPORT_STATUS_SEND_FAILED = "⚠️ Sending failed, please try again."
     const REPORT_STATUS_BAD = "Bad root-affixes, report to GitHub"
     const REPORT_STATUS_LOGIN = "Bad root-affixes, login to Github to report"
     const REPORT_STATUS_SENT = "The bad root-affixes has been sent"
@@ -63,7 +64,7 @@
     function onSearch() {
       var wordEl = document.getElementById("word")
       search(wordEl.value)
-      userLoginGithub()
+      checkGithubIssue()
 
       return false
     }
@@ -187,20 +188,26 @@
       visiable(ID_REPORT, true)
       reportStatusAuthing()
       AccessGithubToken(code, state, URL_INDEX)
-        .then(reportStatusSending)
-        .then(checkGithubIssue(reportBadCombinations))
+        .then(reportBadCombinations)
         .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
     }
 
-    function userLoginGithub() {
+    function startGithubLogin() {
+      var urlParams = new URL(location).searchParams
+      if (!urlParams.has("word")) return
+
+      AuthorizeGithub(urlParams.get("word"), URL_INDEX)
+    }
+
+    function checkGithubLogin(thenFn) {
       visiable(ID_REPORT, true)
-      reportStatusGetting()
+      reportStatusAuthing()
       LoginGithub()
-        .then(checkGithubIssue(reportStatusBad), reportStatusLogin)
-        .catch(err => reportStatusLogin(REPORT_STATUS_RELOGIN))
+        .then(thenFn)
+        .catch(startGithubLogin)
     }
 
-    function checkGithubIssue(_404) {
+    function checkGithubIssue(_404 = reportStatusBad) {
       var wordEl = document.getElementById("word")
       var word = wordEl.value
       if (!word) {
@@ -208,7 +215,9 @@
         return
       }
       var title = joinIssueTitle(word)
-      GithubIssue(title)
+      visiable(ID_REPORT, true)
+      reportStatusGetting()
+      return GithubIssue(title)
         .then(issue => {
           if ("open" === issue.state) {
             reportStatusSent(issue.html_url)
@@ -235,6 +244,7 @@
       reportStatusSending()
       CreateGithubIssue(title, content, label)
         .then(issue => reportStatusSent(issue.html_url))
+        .catch(reportStatusSendFailed)
     }
 
     function joinIssueTitle(word) {
@@ -245,10 +255,7 @@
       visiable(ID_REPORT_LOADER, false)
       innerText(ID_REPORT_STATUS, text)
       onClick(ID_REPORT_STATUS, () => {
-        var urlParams = new URL(location).searchParams
-        if (!urlParams.has("word")) return
-
-        AuthorizeGithub(urlParams.get("word"), URL_INDEX)
+        startGithubLogin()
         return false
       })
     }
@@ -277,11 +284,20 @@
       })
     }
 
+    function reportStatusSendFailed() {
+      visiable(ID_REPORT_LOADER, false)
+      innerText(ID_REPORT_STATUS, REPORT_STATUS_SEND_FAILED)
+      onClick(ID_REPORT_STATUS, () => {
+        checkGithubLogin(reportBadCombinations)
+        return false
+      })
+    }
+
     function reportStatusBad() {
       visiable(ID_REPORT_LOADER, false)
       innerText(ID_REPORT_STATUS, REPORT_STATUS_BAD)
       onClick(ID_REPORT_STATUS, () => {
-        reportBadCombinations()
+        checkGithubLogin(reportBadCombinations)
         return false
       })
     }
@@ -332,7 +348,7 @@
         var word = params.get("word")
         setSearchWordInput(word)
         search(word)
-        userLoginGithub()
+        checkGithubIssue()
       } else if (params.has("code") && params.has("state")) {
         var code = params.get("code")
         var word = params.get("state")
@@ -349,7 +365,7 @@
       if (state && "" != state.word) {
         setSearchWordInput(state.word)
         setWordRootsAndAffixes(state.data)
-        userLoginGithub()
+        checkGithubIssue()
       } else if (state) {
         reset()
       }
