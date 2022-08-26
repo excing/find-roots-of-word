@@ -39,6 +39,8 @@
 
 项目测试地址：[Find root-affixes🍂 of word](https://excing.github.io/find-roots-of-word/index.html)
 
+遇到错误或可能错误的词根词缀组合，可以通过页面右下角的 **Bad root-affixes, report to GitHub** 链接发送 Issue 到 [Github issues](https://github.com/excing/find-roots-of-word/issues)
+
 #### 资源
 
 - 项目中使用到的词根词缀表：[Roots and affixes](roots-and-affixes.csv)
