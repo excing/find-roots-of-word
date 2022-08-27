@@ -28,10 +28,12 @@ async function CreateGithubIssue(title, body, label) {
     [label, "invalid"])
 }
 
+// 1. 用户被重定向，以请求他们的 GitHub 身份
 function AuthorizeGithub(state, redirect_uri) {
   window.location = (`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&state=${state}&redirect_uri=${redirect_uri}`)
 }
 
+// QA: https://docs.github.com/cn/developers/apps/building-github-apps/refreshing-user-to-server-access-tokens
 function LoginGithub() {
   var token = localStorage.getItem("access_token")
   if (!token || token === "") {
@@ -58,6 +60,9 @@ function LoginGithub() {
 }
 
 // AccessGithubToken is login oauth access token of github
+// QA: https://docs.github.com/cn/developers/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps
+// 2. 用户被 GitHub 重定向回您的站点
+// 3. 您的 GitHub 应用程序使用用户的访问令牌访问 API
 async function AccessGithubToken(code, state, redirectURI) {
   var formData = new FormData()
   formData.append("client_id", GITHUB_CLIENT_ID)
